@@ -1,0 +1,17 @@
+
+
+{% extends 'base.html' %} &nbsp;{% block content %}
+<div class="container-fluid mb-5">
+  <h2 class="text-center">Log in</h2>
+</div>
+
+<div class="container-fluid mb-5">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Log in</button>
+  </form>
+</div>
+
+<button type="submit" onclick="location.href = '/accounts/signup'">Signup</button>
+{% endblock content %}

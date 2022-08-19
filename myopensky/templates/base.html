@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sarychev OPENSKY</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">OPENSKY API, {{user.username}}</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <form method="POST">
+                        {% csrf_token %}
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group text-light">
+                                <label for="1_icao24">ICAO24</label>
+                                <input type="text" class="form-control" name="1_icao24" id="1_icao24" placeholder="ICAO24">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group text-light">
+                                <label for="1_Origin">Origin Country</label>
+                                <input type="text" class="form-control" name="1_Origin" id="1_Origin" placeholder="Origin Country">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group text-light">
+                                <label for="1_Longitude">Longitude</label>
+                                <input type="number" class="form-control" name="1_Longitude" id="1_Longitude" placeholder="Longitude">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group text-light">
+                                <label for="1_Latitude">Latitude</label>
+                                <input type="number" class="form-control" name="1_Latitude" id="1_Latitude" placeholder="Latitude">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group text-light">
+                                <label for="1_Inaccuracy">Longitude Inaccuracy</label>
+                                <input type="number" class="form-control" name="long_Inaccuracy" id="long_Inaccuracy" placeholder="Inaccuracy">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group text-light">
+                                <label for="1_Inaccuracy">Latitude Inaccuracy</label>
+                                <input type="number" class="form-control" name="lati_Inaccuracy" id="lati_Inaccuracy" placeholder="Inaccuracy">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <button type="submit" class="btn btn-primary btn-lg btn-block mt-3 mb-3" >Search</button>
+                        </div>
+                    </div>
+                </form>
+          </ul>
+        </div>
+          {% if user.is_authenticated %}
+          <p class="h5 text-light bg-dark">Hello, {{user.username}}!</p>
+          {% endif %}
+          <div class="d-flex flex-row-reverse bd-highlight">
+              <div class="p-2 bd-highlight"><button type="button" class="btn btn-danger btn-lg btn-block float right" onclick="location.href = '/accounts/logout'">Logout</button></div>
+          </div>
+      </div>
+    </nav>
+    {% block content %}
+
+    {% endblock %}
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    </body>
+</html>

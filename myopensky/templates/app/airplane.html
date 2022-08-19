@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col">
+                    <ol class="list-group list-group-numbered">
+                    <li class="list-group-item">ICAO24: {{airplane.icao24}}</li>
+                    <li class="list-group-item">Callsign: {{airplane.callsign}}</li>
+                    <li class="list-group-item">Origin country: {{airplane.origin_country}}</li>
+                    <li class="list-group-item">Time position: {{airplane.time_position}}</li>
+                    <li class="list-group-item">Last contact :{{airplane.last_contact}}</li>
+                    <li class="list-group-item">Latitude: {{airplane.latitude}}</li>
+                    <li class="list-group-item">Longitude: {{airplane.longitude}}</li>
+                    <li class="list-group-item">Baro altitude: {{airplane.baro_altitude}}</li>
+                    <li class="list-group-item">On ground: {{airplane.on_ground}}</li>
+                    <li class="list-group-item">Velocity: {{airplane.velocity}}</li>
+                    <li class="list-group-item">True track: {{airplane.true_track}}</li>
+                    <li class="list-group-item">Vertical rate: {{airplane.vertical_rate}}</li>
+                    <li class="list-group-item">Sensors: {{airplane.sensors}}</li>
+                    <li class="list-group-item">Geo altitude: {{airplane.geo_altitude}}</li>
+                    <li class="list-group-item">Squawk: {{airplane.squawk}}</li>
+                    <li class="list-group-item">SPI: {{airplane.spi}}</li>
+                    <li class="list-group-item">Position Source: {{airplane.position_source}}</li>
+                    </ol>
+                </div>
+                <div class="col">
+                    <div class="container mt-5">
+                        <div style="width: 100%">
+                            <iframe width="100%" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q={{airplane.latitude}},{{airplane.longitude}}+(123)&amp;t=&amp;z=5&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
+                                <a href="https://www.maps.ie/distance-area-calculator.html">measure area map</a>
+                            </iframe>
+                        </div>
+                        <a href="/airplane/{{airplane.icao24}}/add" class="btn btn-primary btn-lg btn-block mt-3" role="button" >Add to Favorites</a>
+                        <a href="/airplane/{{airplane.icao24}}/del" class="btn btn-primary btn-lg btn-block mt-3" role="button">Remove from Favorites</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
