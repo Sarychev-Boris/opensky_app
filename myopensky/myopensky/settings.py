@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
-from passwords import default
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -78,8 +77,16 @@ WSGI_APPLICATION = 'myopensky.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 # Подключена база данных mysql
+# Требуется заполнение данных о БД для подключения к ней
 DATABASES = {
-    'default': default
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'database_name',
+        'USER': 'user_name',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
+        'PORT': '3306'
+    }
 }
 
 

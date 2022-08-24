@@ -3,17 +3,19 @@ import mysql.connector
 from time import sleep
 
 # Подключение и сбор данных с помощью API
-api = OpenSkyApi("", "")
+api = OpenSkyApi("login", "password")    # Для работы сервиса, требуется регистрация на сервисе и ввод логина+пароля
 states = api.get_states()
 
 # Каждые 180 секунд происходит обновление данных о ВС
+# Требуется заполнение данных для mysql.connector и table_name
 while True:
     with mysql.connector.connect(
         host="localhost",
-        user="",
-        password="",
-        database=""
+        user="root",
+        password="password",
+        database="database"
     ) as connection:
+        table_name = 'mainapp_airplane'
         for s in states.states:
             REST_API = [s.icao24, s.callsign, s.origin_country, s.time_position, s.last_contact, s.longitude,
                         s.latitude, s.baro_altitude, s.on_ground, s.velocity, s.true_track, s.vertical_rate, s.sensors,
@@ -46,13 +48,13 @@ while True:
             b = b.replace("\"False\"", "\"0\"", b.count("\"False\""))
             b = b.replace("\"True\"", "\"1\"", b.count("\"True\""))
             c = c.replace("\"NULL\"", "NULL", c.count("\"NULL\"")).replace("\"False\"", "\"0\"", c.count("\"False\"")).replace("\"True\"", "\"1\"", c.count("\"True\""))
-
+            
             test_f = f"""
-                        INSERT INTO mainapp_airplane ({a})
+                        INSERT INTO {table_name} ({a})
                         VALUES ({b})
                             ON DUPLICATE KEY UPDATE {c};
                     """
-            print(REST_API)
+
             with connection.cursor() as cursor:
                 cursor.execute(test_f)
                 connection.commit()
