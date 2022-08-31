@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+import configparser
+
+# Для запуска сервера требуется заполнить файл config.ini в корневой папке приложения
+
+config = configparser.ConfigParser()
+config.read (os.path.join(os.path.dirname(__file__), '..', '..', 'config.ini'), encoding='utf-8-sig')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-6p96bec0drw#b_pk-a0_8*av)$mh@q7a0qrvre#e34xiz34mtb'
+# Для запуска сервера требуется заполнить файл config.ini в корневой директории приложения
+# Для генерации ключа используется скрипт get_key.py в корневой директории приложения
+SECRET_KEY = config.get('django', 'SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -81,11 +87,11 @@ WSGI_APPLICATION = 'myopensky.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'database_name',
-        'USER': 'user_name',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '3306'
+        'NAME': config.get('mysql', 'database'),
+        'USER': config.get('mysql', 'user'),
+        'PASSWORD': config.get('mysql', 'password'),
+        'HOST': config.get('mysql', 'host'),
+        'PORT': config.get('mysql', 'port')
     }
 }
 

@@ -1,21 +1,49 @@
 from opensky_api import OpenSkyApi
 import mysql.connector
-from time import sleep
+import configparser
+import os
+import logging
+
+
+# Декоратор для логирования выполнения главной функции
+def log_wrapper(func):
+    def wrapper(*args, **kwargs):
+        func(*args, **kwargs)
+        logging.basicConfig(
+            level=logging.DEBUG,
+            filename = "mylog.log",
+            format = "%(asctime)s - %(module)s - %(levelname)s - %(funcName)s: %(lineno)d - %(message)s",
+            datefmt='%H:%M:%S',
+            )
+        logging.info('Done')
+    return wrapper
+
+
+# Получаем данные из config.ini и возвращаем объект ConfigParser для использования в последующих функциях
+def get_config_data():
+    config = configparser.ConfigParser()
+    config.read(os.path.join(os.path.dirname(__file__), '..', 'config.ini'), encoding='utf-8-sig')
+    return config
+
 
 # Подключение и сбор данных с помощью API
-api = OpenSkyApi("login", "password")    # Для работы сервиса, требуется регистрация на сервисе и ввод логина+пароля
-states = api.get_states()
+# Для работы сервиса, требуется регистрация на сервисе и ввод логина+пароля в config.ini
+# В результате работы функции получаем объект. содержащий данные о вохдушных судах
+def get_opensky_data(config):
+    api = OpenSkyApi(config.get('opensky', 'login'), config.get('opensky', 'password'))
+    states = api.get_states()
+    return states
 
-# Каждые 180 секунд происходит обновление данных о ВС
-# Требуется заполнение данных для mysql.connector и table_name
-while True:
+
+def update_database(config, states):
     with mysql.connector.connect(
         host="localhost",
-        user="root",
-        password="password",
-        database="database"
+        user=config.get('mysql', 'user'),
+        password=config.get('mysql', 'password'),
+        database=config.get('mysql', 'database')
     ) as connection:
         table_name = 'mainapp_airplane'
+        # Для каждого ВС в states создаем список его данных, которые пойдутв базу данных
         for s in states.states:
             REST_API = [s.icao24, s.callsign, s.origin_country, s.time_position, s.last_contact, s.longitude,
                         s.latitude, s.baro_altitude, s.on_ground, s.velocity, s.true_track, s.vertical_rate, s.sensors,
@@ -43,19 +71,28 @@ while True:
             b = ("".join(("\"" + str(_) + "\"" + ", ") for _ in REST_API)).rstrip(", ")
             c = ("".join(f"{airplane[i]} = \"{str(REST_API[i])}\", " for i in range(1, len(airplane)))).rstrip(", ")
 
-            # необходимая обработка строк, чтобы запрос не ломался от value error in mysql и данные продолжали обновляться
+            # необходимая обработка строк, чтобы запрос не ломался от value error in mysql, и данные продолжали обновляться
             b = b.replace("\"NULL\"", "NULL", b.count("\"NULL\""))
             b = b.replace("\"False\"", "\"0\"", b.count("\"False\""))
             b = b.replace("\"True\"", "\"1\"", b.count("\"True\""))
             c = c.replace("\"NULL\"", "NULL", c.count("\"NULL\"")).replace("\"False\"", "\"0\"", c.count("\"False\"")).replace("\"True\"", "\"1\"", c.count("\"True\""))
-            
-            test_f = f"""
+
+            # формируем команду для обновления БД
+            SQL_comand = f"""
                         INSERT INTO {table_name} ({a})
                         VALUES ({b})
                             ON DUPLICATE KEY UPDATE {c};
                     """
-
             with connection.cursor() as cursor:
-                cursor.execute(test_f)
+                cursor.execute(SQL_comand)
                 connection.commit()
-    sleep(180)
+
+
+@log_wrapper
+def main():
+    config = get_config_data()
+    states = get_opensky_data(config)
+    update_database(config, states)
+
+if __name__ == '__main__':
+    main()
